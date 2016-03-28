@@ -54,8 +54,8 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     
     // MARK: Application in background
     func applicationEnterBackground() {
-        println("applicationEnterBackground")
-        var locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
+        print("applicationEnterBackground")
+        let locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         locationManager.distanceFilter = kCLDistanceFilterNone
@@ -66,14 +66,14 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     }
     
     func restartLocationUpdates() {
-        print("restartLocationUpdates\n")
+        print("restartLocationUpdates\n", terminator: "")
         
         if self.shareModel?.timer != nil {
             self.shareModel?.timer?.invalidate()
             self.shareModel!.timer = nil
         }
         
-        var locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
+        let locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         locationManager.distanceFilter = kCLDistanceFilterNone
@@ -81,21 +81,21 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     }
     
     func startLocationTracking() {
-        print("startLocationTracking\n")
+        print("startLocationTracking\n", terminator: "")
         
         if CLLocationManager.locationServicesEnabled() == false {
-            print("locationServicesEnabled false\n")
-            var servicesDisabledAlert : UIAlertView = UIAlertView(title: "Location Services Disabled", message: "You currently have all location services for this device disabled", delegate: nil, cancelButtonTitle: "OK")
+            print("locationServicesEnabled false\n", terminator: "")
+            let servicesDisabledAlert : UIAlertView = UIAlertView(title: "Location Services Disabled", message: "You currently have all location services for this device disabled", delegate: nil, cancelButtonTitle: "OK")
             servicesDisabledAlert.show()
         } else {
             
             
-            var authorizationStatus : CLAuthorizationStatus = CLLocationManager.authorizationStatus()
+            let authorizationStatus : CLAuthorizationStatus = CLLocationManager.authorizationStatus()
             if (authorizationStatus == CLAuthorizationStatus.Denied) || (authorizationStatus == CLAuthorizationStatus.Restricted) {
-                print("authorizationStatus failed")
+                print("authorizationStatus failed", terminator: "")
             } else {
-                println("startLocationTracking authorized")
-                var locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
+                print("startLocationTracking authorized")
+                let locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
                 locationManager.delegate = self
                 locationManager.desiredAccuracy = kCLLocationAccuracyBest
                 locationManager.distanceFilter = kCLDistanceFilterNone
@@ -107,14 +107,14 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
         }
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        print("locationManager didUpdateLocations\n")
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("locationManager didUpdateLocations\n", terminator: "")
         for (var i : Int = 0; i < locations.count; i++) {
-            var newLocation : CLLocation! = locations[i] as! CLLocation
-            var theLocation : CLLocationCoordinate2D = newLocation.coordinate
-            var theAltitude : CLLocationDistance = newLocation.altitude
-            var theAccuracy : CLLocationAccuracy = newLocation.horizontalAccuracy
-            var locationAge : NSTimeInterval = newLocation.timestamp.timeIntervalSinceNow
+            let newLocation : CLLocation! = locations[i] 
+            let theLocation : CLLocationCoordinate2D = newLocation.coordinate
+            let theAltitude : CLLocationDistance = newLocation.altitude
+            let theAccuracy : CLLocationAccuracy = newLocation.horizontalAccuracy
+            let locationAge : NSTimeInterval = newLocation.timestamp.timeIntervalSinceNow
             if locationAge > 30.0 {
                 continue
             }
@@ -122,12 +122,12 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
             // Select only valid location and also location with good accuracy
             if (newLocation != nil) && (theAccuracy > 0) && (theAccuracy < 2000) && !((theLocation.latitude == 0.0) && (theLocation.longitude == 0.0)) {
                 
-                println("Good location with good accuracy \(theLocation.latitude) & \(theLocation.longitude)")
+                print("Good location with good accuracy \(theLocation.latitude) & \(theLocation.longitude)")
                 
                 self.myLastLocation = theLocation
                 self.myLastLocationAccuracy = theAccuracy
                 
-                var dict : NSMutableDictionary = NSMutableDictionary()
+                let dict : NSMutableDictionary = NSMutableDictionary()
                 dict.setObject(Float(theLocation.latitude), forKey: "latitude")
                 dict.setObject(Float(theLocation.longitude), forKey: "longitude")
                 dict.setObject(Float(theAccuracy), forKey: "theAccuracy")
@@ -157,32 +157,32 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     
     //MARK: Stop the locationManager
     func stopLocationDelayBy10Seconds() {
-        var locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
+        let locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
         locationManager.stopUpdatingLocation()
-        print("locationManager stop Updating after 10 seconds\n")
+        print("locationManager stop Updating after 10 seconds\n", terminator: "")
     }
     
-    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         
-        println("locationManager Error: \(error.localizedDescription)")
+        print("locationManager Error: \(error.localizedDescription)")
         switch (error.code) {
             
             
         case CLError.Network.rawValue:
-            println("locationManager Error: Please check your network connection.")
+            print("locationManager Error: Please check your network connection.")
             restartAfterMinutes(1)
-            var alert : UIAlertView = UIAlertView(title: "Network Error", message: "Please check your network connection.", delegate: self, cancelButtonTitle: "OK")
+            let alert : UIAlertView = UIAlertView(title: "Network Error", message: "Please check your network connection.", delegate: self, cancelButtonTitle: "OK")
             alert.show()
             
             break
         case CLError.Denied.rawValue:
-            println("locationManager Error: Please check your network connection.")
+            print("locationManager Error: Please check your network connection.")
             restartAfterMinutes(1)
-            var alert : UIAlertView = UIAlertView(title: "Network Error", message: "Please check your network connection.", delegate: self, cancelButtonTitle: "OK")
+            let alert : UIAlertView = UIAlertView(title: "Network Error", message: "Please check your network connection.", delegate: self, cancelButtonTitle: "OK")
             alert.show()
             break
         default:
-            println("locationManager Error: Uncaught error")
+            print("locationManager Error: Uncaught error")
             restartAfterMinutes(1)
             break
         }
@@ -191,7 +191,7 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     
     func restartAfterMinutes(minutes : NSTimeInterval) -> Void {
         
-        println("restartAfterMinutes \(minutes)")
+        print("restartAfterMinutes \(minutes)")
         self.shareModel!.bgTask = BackgroundTaskManager.sharedBackgroundTaskManager()
         self.shareModel!.bgTask!.beginNewBackgroundTask()
         
@@ -202,13 +202,13 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     }
     
     func stopLocationTracking () {
-        print("stopLocationTracking\n")
+        print("stopLocationTracking\n", terminator: "")
         
         if self.shareModel!.timer != nil {
             self.shareModel!.timer!.invalidate()
             self.shareModel!.timer = nil
         }
-        var locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
+        let locationManager : CLLocationManager = LocationTracker.sharedLocationManager()!
         locationManager.stopUpdatingLocation()
     }
     
@@ -220,7 +220,7 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
         var myBestLocation : NSMutableDictionary = NSMutableDictionary()
         
         for (var i : Int = 0 ; i < self.shareModel!.myLocationArray!.count ; i++) {
-            var currentLocation : NSMutableDictionary = self.shareModel!.myLocationArray!.objectAtIndex(i) as! NSMutableDictionary
+            let currentLocation : NSMutableDictionary = self.shareModel!.myLocationArray!.objectAtIndex(i) as! NSMutableDictionary
             if i == 0 {
                 myBestLocation = currentLocation
             } else {
@@ -237,17 +237,17 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
         // sending the last known location to the server
         
         if self.shareModel!.myLocationArray!.count == 0 {
-            print("Unable to get location, use the last known location\n")
+            print("Unable to get location, use the last known location\n", terminator: "")
             self.myLocation = self.myLastLocation
             self.myLocationAcuracy = self.myLastLocationAccuracy
         } else {
-            var lat : CLLocationDegrees = myBestLocation.objectForKey(LATITUDE) as! CLLocationDegrees
-            var lon : CLLocationDegrees = myBestLocation.objectForKey(LONGITUDE) as! CLLocationDegrees
-            var theBestLocation = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            let lat : CLLocationDegrees = myBestLocation.objectForKey(LATITUDE) as! CLLocationDegrees
+            let lon : CLLocationDegrees = myBestLocation.objectForKey(LONGITUDE) as! CLLocationDegrees
+            let theBestLocation = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             self.myLocation = theBestLocation
             self.myLocationAcuracy = myBestLocation.objectForKey(ACCURACY) as! CLLocationAccuracy!
         }
-        print("Send to server: latitude \(self.myLocation.latitude) longitude \(self.myLocation?.longitude) accuracy \(self.myLocationAcuracy)\n")
+        print("Send to server: latitude \(self.myLocation.latitude) longitude \(self.myLocation?.longitude) accuracy \(self.myLocationAcuracy)\n", terminator: "")
         
         //TODO: Your code to send the self.myLocation and self.myLocationAccuracy to your server
         
@@ -261,13 +261,13 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
     }
     
     func getBestLocationForServer() -> NSDictionary? {
-        print("getBestLocationForServer\n")
+        print("getBestLocationForServer\n", terminator: "")
         
         // Find the best location from the array based on accuracy
         var myBestLocation : NSMutableDictionary = NSMutableDictionary()
         
         for (var i : Int = 0 ; i < self.shareModel!.myLocationArray!.count ; i++) {
-            var currentLocation : NSMutableDictionary = self.shareModel!.myLocationArray!.objectAtIndex(i) as! NSMutableDictionary
+            let currentLocation : NSMutableDictionary = self.shareModel!.myLocationArray!.objectAtIndex(i) as! NSMutableDictionary
             if i == 0 {
                 myBestLocation = currentLocation
             } else {
@@ -276,7 +276,7 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
                 }
             }
         }
-        print("My Best location \(myBestLocation)\n")
+        print("My Best location \(myBestLocation)\n", terminator: "")
         
         // If the array is 0, get the last location
         // Sometimes due to network issue or unknown reason,
@@ -284,25 +284,25 @@ class LocationTracker : NSObject, CLLocationManagerDelegate, UIAlertViewDelegate
         // sending the last known location to the server
         
         if self.shareModel!.myLocationArray!.count == 0 {
-            print("Unable to get location, use the last known location\n")
+            print("Unable to get location, use the last known location\n", terminator: "")
             self.myLocation = self.myLastLocation
             self.myLocationAcuracy = self.myLastLocationAccuracy
         } else {
-            var lat : CLLocationDegrees = myBestLocation.objectForKey(LATITUDE) as! CLLocationDegrees
-            var lon : CLLocationDegrees = myBestLocation.objectForKey(LONGITUDE) as! CLLocationDegrees
-            var theBestLocation = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            let lat : CLLocationDegrees = myBestLocation.objectForKey(LATITUDE) as! CLLocationDegrees
+            let lon : CLLocationDegrees = myBestLocation.objectForKey(LONGITUDE) as! CLLocationDegrees
+            let theBestLocation = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             self.myLocation = theBestLocation
             
             self.myLocationAcuracy = myBestLocation.objectForKey(ACCURACY) as! CLLocationAccuracy!
         }
         
-        var returnType : NSMutableDictionary = NSMutableDictionary()
+        let returnType : NSMutableDictionary = NSMutableDictionary()
         returnType.setValue(self.myLocation.latitude, forKey: "lat")
         returnType.setValue(self.myLocation.longitude, forKey: "lon")
         returnType.setValue(self.myLocationAcuracy, forKey: "acc")
         
         
-        print("Send to server: latitude \(self.myLocation.latitude) longitude \(self.myLocation.longitude) accuracy \(self.myLocationAcuracy)\n")
+        print("Send to server: latitude \(self.myLocation.latitude) longitude \(self.myLocation.longitude) accuracy \(self.myLocationAcuracy)\n", terminator: "")
         
         //TODO: Your code to send the self.myLocation and self.myLocationAccuracy to your server
         

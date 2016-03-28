@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func updateLocation() -> Void {
-        println("appDelegate updateLocation")
+        print("appDelegate updateLocation")
         self.locationTracker.updateLocationToServer()
     }
     
