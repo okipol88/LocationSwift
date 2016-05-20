@@ -9,12 +9,11 @@
 import Foundation
 import UIKit
 
-class LocationShareModel : NSObject {
+ class LocationShareModel : NSObject {
     var timer : NSTimer?
     var bgTask : BackgroundTaskManager?
-    var myLocationArray : NSMutableArray?
     
-    func sharedModel()-> AnyObject {
+     func sharedModel()-> AnyObject {
         struct Static {
             static var sharedMyModel : AnyObject?
             static var onceToken : dispatch_once_t = 0

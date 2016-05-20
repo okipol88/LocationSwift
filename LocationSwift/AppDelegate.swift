@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SLF4Swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
       
+        let factory = SingleLoggerFactory(logger: NSLogger(level: SLFLogLevel.All, name: ""))
+        SLF4Swift.setSharedFactory(factory)
+        
         let alertController : UIAlertController
         var message : String
        
@@ -54,8 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func updateLocation() -> Void {
-        println("appDelegate updateLocation")
-        self.locationTracker.updateLocationToServer()
+        print("appDelegate updateLocation")
     }
     
 
